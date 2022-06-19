@@ -33,3 +33,22 @@ provider "tailscale" {
 }
 
 provider "consul" {}
+
+data "consul_nodes" "nodes" {
+  query_options {
+    datacenter = var.datacenter
+  }
+}
+
+# Create a tailscale api key for each node
+resource "tailscale_tailnet_key" "node_key" {
+  for_each      = toset(data.consul_nodes.nodes.nodes[*].name)
+  reusable      = true
+  ephemeral     = true
+  preauthorized = true
+
+}
+
+output "nodes" {
+  value = length(data.consul_nodes.nodes.nodes)
+}
