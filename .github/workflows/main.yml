@@ -7,10 +7,24 @@ on:
     branches:
       - main
 jobs:
+  setup_consul:
+    name: Create Consul backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Consul
+        run: |
+          curl -fSL https://releases.hashicorp.com/consul/1.12.2/consul_1.12.2_linux_amd64.zip \
+          gunzip -> consul ; chmod +x consul
+      - name: Start Consul
+        run: |
+          ./consul agent -dev
+
   tf_validate:
     name: Validate Terraform
     # run terraform fmt and terraform validate on the source code
     runs-on: ubuntu-latest
+    needs:
+      - setup_consul
     steps:
       - uses: actions/checkout@v2
       - name: Get Terraform
