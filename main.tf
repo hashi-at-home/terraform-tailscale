@@ -54,7 +54,6 @@ resource "tailscale_tailnet_key" "node_key" {
   ephemeral     = true
   preauthorized = true
   # tags = toset(["datacenter:${var.datacenter}", "node:${each.key}"])
-
   # depends_on = [tailscale_device_tags.device_tags]
 }
 
