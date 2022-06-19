@@ -1,0 +1,40 @@
+name: Release
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+jobs:
+  tf_validate:
+    name: Validate Terraform
+    # run terraform fmt and terraform validate on the source code
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Get Terraform
+        run: |
+          curl -fsL https://releases.hashicorp.com/terraform/1.2.3/terraform_1.2.3_linux_amd64.zip \
+          | gunzip ->terraform ; chmod +x terraform
+      - name: Validate Terraform
+        run: ./terraform init ; ./terraform validate
+
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    needs:
+      - tf_validate
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 'lts/*'
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
