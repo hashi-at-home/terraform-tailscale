@@ -28,7 +28,7 @@ jobs:
       - name: Validate Terraform
         run: ./terraform init ; ./terraform validate
       - name: Stop Consul
-        run: kill $(cat $HOME/pid.nohup)
+        run: cat $HOME/pid.nohup ; kill -9 $(cat $HOME/pid.nohup)
   # this could be improved with "services"
 
   release:
