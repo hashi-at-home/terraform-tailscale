@@ -16,7 +16,9 @@ jobs:
           curl -fSL https://releases.hashicorp.com/consul/1.12.2/consul_1.12.2_linux_amd64.zip \
           | gunzip -> consul ; chmod +x consul
       - name: Start Consul
-        run: nohup ./consul agent -dev & ; echo $! > $HOME/pid.nohup
+        run: nohup ./consul agent -dev &
+      - name: Save PID
+        run: echo $! > $HOME/pid.nohup
 
   tf_validate:
     name: Validate Terraform
