@@ -12,6 +12,12 @@ jobs:
     # run terraform fmt and terraform validate on the source code
     runs-on: ubuntu-latest
     steps:
+      - name: Get Consul
+        run: |
+          curl -fSL https://releases.hashicorp.com/consul/1.12.2/consul_1.12.2_linux_amd64.zip \
+          | gunzip -> consul ; chmod +x consul
+      - name: Start Consul
+        run: nohup ./consul agent -dev &
       - uses: actions/checkout@v2
       - name: Get Terraform
         run: |
@@ -19,6 +25,7 @@ jobs:
           | gunzip ->terraform ; chmod +x terraform
       - name: Validate Terraform
         run: ./terraform init ; ./terraform validate
+  # this could be improved with "services"
 
   release:
     name: Release
