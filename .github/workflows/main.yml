@@ -16,8 +16,7 @@ jobs:
           curl -fSL https://releases.hashicorp.com/consul/1.12.2/consul_1.12.2_linux_amd64.zip \
           | gunzip -> consul ; chmod +x consul
       - name: Start Consul
-        run: |
-          ./consul agent -dev
+        run: nohup ./consul agent -dev & ; echo $! > $HOME/pid.nohup
 
   tf_validate:
     name: Validate Terraform
@@ -33,6 +32,16 @@ jobs:
           | gunzip ->terraform ; chmod +x terraform
       - name: Validate Terraform
         run: ./terraform init ; ./terraform validate
+  consul_shutdown:
+    name: Stop Consul
+    runs-on: ubuntu-latest
+    needs:
+      - tf_validate
+      - setup_consul
+    steps:
+      - name: Stop Consul
+        run: kill $(cat $HOME/pid.nohup)
+
 
   release:
     name: Release
