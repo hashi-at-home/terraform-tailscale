@@ -9,6 +9,11 @@ terraform {
       source  = "hashicorp/vault"
       version = "3.7.0"
     }
+
+    consul = {
+      source  = "hashicorp/consul"
+      version = "2.15.1"
+    }
   }
 
   backend "consul" {
@@ -26,3 +31,5 @@ provider "tailscale" {
   api_key = data.vault_generic_secret.tailscale.data.tailscale_secret_key
   tailnet = data.vault_generic_secret.tailscale.data.tailnet
 }
+
+provider "consul" {}
